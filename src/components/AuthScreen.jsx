@@ -2,6 +2,33 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { ListTodo, Loader2 } from 'lucide-react'
 
+/**
+ * Supabase returns terse, developer-facing strings. Translate the ones a real
+ * person will actually hit; anything unrecognised passes through unchanged.
+ */
+const friendlyError = (raw = '') => {
+  const m = raw.toLowerCase()
+  if (m.includes('rate limit')) {
+    return 'Too many emails have been sent in the last little while. Please wait a few minutes and try again.'
+  }
+  if (m.includes('invalid login credentials')) {
+    return 'That email and password combination is not right.'
+  }
+  if (m.includes('already registered') || m.includes('already been registered')) {
+    return 'That email already has an account — try signing in instead.'
+  }
+  if (m.includes('email not confirmed')) {
+    return 'Please confirm your email address first — check your inbox for the link.'
+  }
+  if (m.includes('password should be')) {
+    return 'Password needs to be at least 6 characters.'
+  }
+  if (m.includes('failed to fetch') || m.includes('networkerror')) {
+    return "Couldn't reach the server. Check your connection and try again."
+  }
+  return raw || 'Something went wrong. Try again.'
+}
+
 const MODES = {
   signin: { title: 'Welcome back', action: 'Sign in', alt: 'signup' },
   signup: { title: 'Create your account', action: 'Create account', alt: 'signin' },
@@ -40,7 +67,7 @@ export default function AuthScreen({ appName }) {
         // Success needs no handling — the auth listener in App swaps the screen.
       }
     } catch (err) {
-      setError(err.message || 'Something went wrong. Try again.')
+      setError(friendlyError(err.message))
     } finally {
       setBusy(false)
     }
