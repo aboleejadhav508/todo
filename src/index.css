@@ -1,0 +1,1762 @@
+/* ==========================================================================
+   Design tokens
+
+   Theme is always pinned explicitly: [data-theme] is set on <html> before
+   first paint (see index.html) and is only ever "light" or "dark". The OS
+   preference is read once, on first run, to pick the starting value.
+
+   :root holds the COMPLETE light palette; the [data-theme="dark"] block below
+   redefines the same names. Never give a color its only definition in the
+   dark block, or light mode inherits a hole.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg: #f7f8fb;
+  --surface: #ffffff;
+  --surface-2: #f2f4f8;
+  --surface-3: #e9ecf3;
+
+  /* Lines */
+  --border: #e5e8f0;
+  --border-strong: #d3d8e4;
+
+  /* Text */
+  --text: #16181f;
+  --text-2: #5b6274;
+  --text-3: #9aa1b3;
+
+  /* Accent. --accent is the ONLY authored value — it's user-configurable and
+     gets overwritten inline on <html>, so every other shade is derived from it
+     with color-mix rather than hand-picked. Light mode darkens toward black;
+     the dark block below lightens toward white instead.
+       --accent       fills (buttons, dots, checkboxes)
+       --accent-hover fill on hover
+       --accent-text  accent-colored TEXT; needs more contrast than a fill */
+  --accent: #e9631a;
+  --accent-hover: color-mix(in srgb, var(--accent) 84%, #000);
+  --accent-text: color-mix(in srgb, var(--accent) 72%, #000);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, #fff);
+  --accent-border: color-mix(in srgb, var(--accent) 32%, #fff);
+  --ring-color: color-mix(in srgb, var(--accent) 22%, transparent);
+
+  /* Semantic */
+  --success: #0d9668;
+  --warning: #b4690e;
+  --warning-soft: #fdf3e3;
+  --danger: #dc3d43;
+  --danger-soft: #fdf0f0;
+
+  /* Compositing */
+  --hover-veil: rgba(255, 255, 255, 0.7);
+  --bg-blur: rgba(247, 248, 251, 0.85);
+  --overlay: rgba(22, 24, 31, 0.4);
+
+  /* Category tag mixing — tags are tinted from an inline --tag-color */
+  --tag-fill: 12%;
+  --tag-ring: 26%;
+  --tag-text-w: 100%;
+  --tag-text-base: #000000;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(22, 24, 31, 0.05);
+  --shadow: 0 2px 10px rgba(22, 24, 31, 0.07);
+  --shadow-lg: 0 16px 48px rgba(22, 24, 31, 0.16);
+
+  /* Radii */
+  --r-sm: 6px;
+  --r: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+
+  /* Focus */
+  --ring: 0 0 0 3px var(--ring-color);
+
+  /* Rhythm */
+  --pad-x: 32px;
+
+  /* Devanagari needs a font stack of its own — Inter has no coverage */
+  --font-deva: 'Nirmala UI', 'Noto Sans Devanagari', 'Mangal', 'Kohinoor Devanagari', system-ui, sans-serif;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #0e1014;
+  --surface: #16191f;
+  --surface-2: #1d212a;
+  --surface-3: #272c37;
+
+  --border: #252a34;
+  --border-strong: #363d4a;
+
+  --text: #e9ebf0;
+  --text-2: #a2a9b8;
+  --text-3: #6e7686;
+
+  /* --accent is deliberately NOT redefined here: it's the shared user value.
+     Only the derived shades flip direction, lightening instead of darkening. */
+  --accent-hover: color-mix(in srgb, var(--accent) 80%, #fff);
+  --accent-text: color-mix(in srgb, var(--accent) 72%, #fff);
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, #000);
+  --accent-border: color-mix(in srgb, var(--accent) 34%, #000);
+  --ring-color: color-mix(in srgb, var(--accent) 30%, transparent);
+
+  --success: #34d399;
+  --warning: #f0b429;
+  --warning-soft: #2b2110;
+  --danger: #f87171;
+  --danger-soft: #2c1618;
+
+  --hover-veil: rgba(255, 255, 255, 0.06);
+  --bg-blur: rgba(14, 16, 20, 0.85);
+  --overlay: rgba(0, 0, 0, 0.62);
+
+  --tag-fill: 22%;
+  --tag-ring: 34%;
+  --tag-text-w: 60%;
+  --tag-text-base: #ffffff;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* ==========================================================================
+   Reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+textarea {
+  resize: vertical;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+/* ==========================================================================
+   Form controls — one shared shape so every typing surface aligns
+   ========================================================================== */
+
+.input,
+.textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--text-3);
+}
+
+.input:hover,
+.textarea:hover {
+  border-color: var(--border-strong);
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+
+.textarea {
+  min-height: 76px;
+}
+
+.input--flush,
+.textarea--flush {
+  padding: 6px 8px;
+  background: transparent;
+  border-color: transparent;
+}
+
+.input--flush:hover,
+.textarea--flush:hover {
+  background: var(--surface-2);
+  border-color: transparent;
+}
+
+.input--flush:focus,
+.textarea--flush:focus {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+
+.input--title {
+  padding: 12px 14px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.input--date {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.input--date::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.input--date::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.field__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+[contenteditable] {
+  outline: none;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+  white-space: nowrap;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.btn:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-color: var(--accent);
+}
+
+.btn--primary {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.btn--primary:hover {
+  color: #fff;
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn--primary:disabled {
+  background: var(--surface-3);
+  border-color: var(--surface-3);
+  color: var(--text-3);
+  cursor: default;
+}
+
+.btn--danger {
+  color: #fff;
+  background: var(--danger);
+  border-color: var(--danger);
+  font-weight: 600;
+}
+
+.btn--danger:hover {
+  color: #fff;
+  filter: brightness(0.93);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+.btn--ghost:hover {
+  background: var(--surface-2);
+  border-color: transparent;
+}
+
+.btn--icon {
+  padding: 9px;
+  color: var(--text-2);
+}
+
+/* ==========================================================================
+   App shell
+   ========================================================================== */
+
+/* The shell owns the viewport and never scrolls itself — the sidebar and the
+   task column each scroll independently, so the sidebar stays put while you
+   move through a long task list. */
+.app {
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  background: var(--bg);
+}
+
+.content {
+  flex: 1;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px var(--pad-x) 72px;
+}
+
+/* ==========================================================================
+   Sidebar
+   ========================================================================== */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-shrink: 0;
+  width: 244px;
+  height: 100%;
+  overflow: hidden;
+  padding: 22px 14px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.sidebar__name {
+  font-family: var(--font-deva);
+  font-size: 19px;
+  font-weight: 650;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.sidebar__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Brand and theme switcher stay pinned; everything between them scrolls as one
+   region. Scrolling the nav body rather than just the category list means a
+   short window doesn't squeeze the categories into a tiny porthole. */
+.sidebar__scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* bleed the padding so the scrollbar clears the delete buttons */
+  margin-right: -6px;
+  padding-right: 6px;
+}
+
+.sidebar__label {
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.sidebar__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar__footer .theme-toggle {
+  flex: 1;
+}
+
+.settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  color: var(--text-3);
+  background: var(--surface-2);
+  border-radius: var(--r);
+  transition: color 0.15s, background 0.15s;
+}
+
+.settings-btn:hover {
+  color: var(--text);
+  background: var(--surface-3);
+}
+
+.settings-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: var(--text-2);
+  text-align: left;
+  border-radius: var(--r-sm);
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-item:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.nav-item.is-active {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.nav-item__text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border: 1.5px solid var(--border-strong);
+  border-radius: 5px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.checkbox.is-checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+/* The row — not the label button — carries the highlight, so the label and its
+   delete button read as one control instead of two detached ones. */
+.cat-row {
+  display: flex;
+  align-items: center;
+  padding-right: 4px;
+  border-radius: var(--r-sm);
+  transition: background 0.15s;
+}
+
+.cat-row:hover {
+  background: var(--surface-2);
+}
+
+.cat-row.is-active {
+  background: var(--accent-soft);
+}
+
+/* Let the row's background show through; the item keeps only its text colour */
+.cat-row .nav-item,
+.cat-row .nav-item:hover,
+.cat-row .nav-item.is-active {
+  background: transparent;
+}
+
+.cat-row .nav-item {
+  padding-right: 4px;
+}
+
+.cat-del {
+  display: flex;
+  align-items: center;
+  padding: 7px 8px;
+  color: var(--text-3);
+  border-radius: var(--r-sm);
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+
+.cat-row:hover .cat-del {
+  opacity: 1;
+}
+
+.cat-del:hover {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.cat-del:focus-visible {
+  opacity: 1;
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.cat-edit {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  font-size: 14px;
+}
+
+.add-cat {
+  display: flex;
+  gap: 6px;
+  padding: 0 2px;
+  margin-top: 8px;
+}
+
+.btn-dashed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: calc(100% - 4px);
+  margin: 8px 2px 0;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text-3);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-sm);
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.btn-dashed:hover {
+  color: var(--accent-text);
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+/* Theme switcher — segmented, same shape as the task status control */
+.theme-toggle {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface-2);
+  border-radius: var(--r);
+}
+
+.theme-toggle__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 0;
+  color: var(--text-3);
+  border-radius: var(--r-sm);
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.theme-toggle__btn:hover {
+  color: var(--text);
+  background: var(--hover-veil);
+}
+
+.theme-toggle__btn.is-active {
+  color: var(--accent-text);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ==========================================================================
+   Top bar
+   ========================================================================== */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px var(--pad-x);
+  background: var(--bg-blur);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar__heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+
+.topbar__meta {
+  margin-top: 3px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 320px;
+  max-width: 46vw;
+}
+
+.search__icon {
+  position: absolute;
+  left: 12px;
+  display: flex;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.search__input {
+  padding-left: 36px;
+  padding-right: 36px;
+}
+
+.search__clear {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  color: var(--text-3);
+  border-radius: var(--r-sm);
+  transition: color 0.15s, background 0.15s;
+}
+
+.search__clear:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+/* ==========================================================================
+   Add task
+   ========================================================================== */
+
+.addtask-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px 20px;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text-3);
+  background: var(--surface);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-lg);
+  transition: color 0.15s, border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.addtask-trigger:hover {
+  color: var(--accent-text);
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+.addtask-card {
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+  animation: dropIn 0.18s ease;
+}
+
+.addtask-card__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.addtask-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+@keyframes dropIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Dropdown
+   ========================================================================== */
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--text-2);
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.dropdown__trigger:hover {
+  border-color: var(--border-strong);
+}
+
+.dropdown__trigger.is-open {
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+
+.dropdown__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 60;
+  min-width: 210px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-lg);
+  animation: dropIn 0.14s ease;
+}
+
+.dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13.5px;
+  color: var(--text);
+  text-align: left;
+  border-radius: var(--r-sm);
+  transition: background 0.12s;
+}
+
+.dropdown__item:hover {
+  background: var(--surface-2);
+}
+
+.dropdown__item.is-selected {
+  color: var(--accent-text);
+  font-weight: 550;
+}
+
+.dropdown__check {
+  display: flex;
+  margin-left: auto;
+  color: var(--accent-text);
+}
+
+.dropdown__empty {
+  padding: 10px;
+  font-size: 13px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+/* ==========================================================================
+   Task card
+   ========================================================================== */
+
+.task-card {
+  position: relative;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+
+.task-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.task-card.is-done {
+  background: var(--surface-2);
+  box-shadow: none;
+}
+
+/* Title and both dates share one row so cards read like table rows. The date
+   chips are a fixed width, which is what makes them line up card to card. */
+.task-card__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.task-card__when {
+  display: flex;
+  gap: 8px;
+}
+
+.task-card__title {
+  min-width: 0;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--text);
+  border-radius: var(--r-sm);
+  cursor: text;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.task-card__title:hover {
+  background: var(--surface-2);
+}
+
+.task-card__title:focus {
+  background: var(--surface);
+  box-shadow: var(--ring);
+}
+
+.task-card__title:empty::before {
+  content: 'Untitled task';
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+.task-card.is-done .task-card__title {
+  color: var(--text-3);
+  text-decoration: line-through;
+}
+
+.task-card__del {
+  display: flex;
+  padding: 6px;
+  color: var(--text-3);
+  border-radius: var(--r-sm);
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+
+.task-card:hover .task-card__del,
+.task-card__del:focus-visible {
+  opacity: 1;
+}
+
+.task-card__del:hover {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.task-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+/* Tinted from the inline --tag-color; mix ratios are theme tokens so tags
+   stay legible on both light and dark surfaces. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 1.4;
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--tag-color) var(--tag-text-w), var(--tag-text-base));
+  background: color-mix(in srgb, var(--tag-color) var(--tag-fill), transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tag-color) var(--tag-ring), transparent);
+}
+
+.tag-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text-3);
+  border: 1px dashed var(--border-strong);
+  border-radius: 999px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.tag-add:hover {
+  color: var(--accent-text);
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+/* Date chip: visible button + a transparent native input behind it */
+.date-chip-wrap {
+  position: relative;
+  display: flex;
+}
+
+.date-chip {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 190px;
+  padding: 7px 24px 7px 10px;
+  font-size: 12.5px;
+  color: var(--text-2);
+  text-align: left;
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.date-chip:hover {
+  background: var(--surface);
+  border-color: var(--border-strong);
+}
+
+.date-chip:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+
+.date-chip__label {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.date-chip__value {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.date-chip.is-empty .date-chip__value {
+  color: var(--text-3);
+}
+
+/* Overdue / due-today flags */
+.date-chip[data-state='overdue'] {
+  color: var(--danger);
+  background: var(--danger-soft);
+  font-weight: 600;
+}
+
+.date-chip[data-state='overdue'] .date-chip__label {
+  color: var(--danger);
+}
+
+.date-chip[data-state='today'] {
+  color: var(--warning);
+  background: var(--warning-soft);
+  font-weight: 600;
+}
+
+.date-chip[data-state='today'] .date-chip__label {
+  color: var(--warning);
+}
+
+.date-chip__clear {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  transform: translateY(-50%);
+  display: flex;
+  padding: 3px;
+  color: var(--text-3);
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+
+.date-chip-wrap:hover .date-chip__clear,
+.date-chip__clear:focus-visible {
+  opacity: 1;
+}
+
+.date-chip__clear:hover {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+/* Real input — present for the picker and a11y, never visible */
+.date-chip__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.task-card__notes {
+  min-height: 58px;
+  margin-bottom: 14px;
+}
+
+.status-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface-2);
+  border-radius: var(--r);
+}
+
+.status-btn {
+  padding: 7px 6px;
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--text-2);
+  text-align: center;
+  border-radius: var(--r-sm);
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.status-btn:hover {
+  color: var(--text);
+  background: var(--hover-veil);
+}
+
+.status-btn.is-active {
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font-weight: 650;
+}
+
+.status-btn.is-active[data-status='todo'] {
+  color: var(--text);
+}
+
+.status-btn.is-active[data-status='inprogress'] {
+  color: var(--warning);
+}
+
+.status-btn.is-active[data-status='done'] {
+  color: var(--success);
+}
+
+/* ==========================================================================
+   Task groups
+   ========================================================================== */
+
+.group {
+  margin-bottom: 26px;
+}
+
+.group__header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 0;
+  margin-bottom: 10px;
+  color: var(--text-2);
+  border-radius: var(--r-sm);
+}
+
+.group__header:hover {
+  color: var(--text);
+}
+
+.group__label {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.group__count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.group__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.group__empty {
+  padding: 4px 2px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* ==========================================================================
+   Empty state
+   ========================================================================== */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 72px 20px;
+  text-align: center;
+}
+
+.empty__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 16px;
+  color: var(--text-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+
+.empty__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.empty__text {
+  margin-top: 5px;
+  font-size: 13.5px;
+  color: var(--text-3);
+}
+
+/* ==========================================================================
+   Calendar modal
+   ========================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--overlay);
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal {
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+  animation: dropIn 0.18s ease;
+}
+
+.modal--confirm {
+  max-width: 420px;
+  padding: 22px 24px;
+}
+
+.confirm__title {
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.confirm__message {
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+.confirm__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+/* Form dialogs (settings, category create/edit) */
+.modal--form {
+  max-width: 440px;
+  padding: 22px 24px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 18px;
+}
+
+.form-row__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.form-row__hint {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-3);
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  font-size: 11.5px;
+  font-weight: 550;
+  color: var(--accent-text);
+  border-radius: 4px;
+}
+
+.link-btn:hover {
+  background: var(--accent-soft);
+}
+
+.account__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.account__email {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13.5px;
+  color: var(--text-2);
+}
+
+/* ==========================================================================
+   Auth screen
+   ========================================================================== */
+
+.splash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: var(--text-3);
+  background: var(--bg);
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--bg);
+}
+
+.auth__card {
+  width: 100%;
+  max-width: 380px;
+  padding: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow);
+}
+
+.auth__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.auth__title {
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+
+.auth__sub {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.auth__submit {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.auth__links {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.auth__error,
+.auth__notice {
+  margin-top: 14px;
+  padding: 9px 11px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  border-radius: var(--r-sm);
+}
+
+.auth__error {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.auth__notice {
+  color: var(--accent-text);
+  background: var(--accent-soft);
+}
+
+/* Colour picker */
+.colorfield {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.colorfield__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.swatch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #fff;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.swatch:hover {
+  transform: scale(1.1);
+}
+
+.swatch.is-active {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--text-3);
+}
+
+.swatch:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+}
+
+.colorfield__custom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Native colour input, restyled down to a plain square */
+.colorfield__picker {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.colorfield__picker::-webkit-color-swatch-wrapper {
+  padding: 3px;
+}
+
+.colorfield__picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+.colorfield__hex {
+  width: 108px;
+  font-family: ui-monospace, 'Cascadia Code', Menlo, monospace;
+  font-size: 13px;
+  text-transform: lowercase;
+}
+
+.colorfield__rgb {
+  font-size: 12px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.modal__title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: var(--text);
+}
+
+.cal-months {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+}
+
+.cal-month__title {
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 650;
+  text-align: center;
+  color: var(--text);
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.cal-dow {
+  padding: 4px 0 8px;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text-3);
+}
+
+.cal-day {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--text);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.cal-day:hover {
+  background: var(--surface-2);
+}
+
+.cal-day.is-today {
+  font-weight: 650;
+  color: var(--accent-text);
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+.cal-day.is-selected {
+  color: #fff;
+  font-weight: 650;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.cal-day__dot {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.cal-day.is-selected .cal-day__dot {
+  background: #fff;
+}
+
+.cal-note {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.cal-note__date {
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.cal-note__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Not enough width to keep title and both dates on one line — drop the dates
+   to their own row and let them share it evenly. */
+@media (max-width: 900px) {
+  .task-card__head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .task-card__when {
+    grid-column: 1 / -1;
+  }
+
+  .date-chip-wrap {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .date-chip {
+    width: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --pad-x: 18px;
+  }
+
+  /* Stacked: fall back to one normal page scroll rather than two panes */
+  .app {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .main {
+    height: auto;
+    overflow: visible;
+  }
+
+  .sidebar__scroll {
+    overflow: visible;
+    min-height: 0;
+  }
+
+  .search {
+    max-width: none;
+    width: 100%;
+  }
+}

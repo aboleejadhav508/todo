@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo</title>
+    <script>
+      // Pin the theme before first paint so a dark-mode user never sees a
+      // flash of the light palette while React boots. Falls back to the OS
+      // preference on first run, matching the store's initial value.
+      (function () {
+        var t, accent;
+        try {
+          var saved = JSON.parse(localStorage.getItem('temp-todo-store'));
+          if (saved && saved.state) {
+            t = saved.state.theme;
+            accent = saved.state.accent;
+          }
+        } catch (e) { /* first run, or storage blocked */ }
+        if (t !== 'dark' && t !== 'light') {
+          t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = t;
+        // Same reason as the theme: avoid a flash of the default accent.
+        if (/^#[0-9a-f]{6}$/i.test(accent || '')) {
+          document.documentElement.style.setProperty('--accent', accent);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
