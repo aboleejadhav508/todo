@@ -60,7 +60,7 @@ Finally, in Supabase under **Authentication → URL Configuration**, set **Site 
 
 ### Notes
 
-- **Email confirmation is on by default.** Leave it on for a public app, or new sign-ups can't be distinguished from typos and junk.
+- **Supabase's built-in email service is rate limited to roughly 2 emails per hour.** It exists for testing, not production. Once exhausted, sign-ups fail with `email rate limit exceeded` — which looks like a bug in the app but isn't. Two ways out: turn off **Authentication → Sign In / Providers → Email → Confirm email** (instant sign-ups, no email sent, unverified addresses), or add your own SMTP under **Authentication → Emails** ([Resend](https://resend.com) has a free tier) and keep confirmation on. Do the latter before more than a couple of people use your instance.
 - **Writes are debounced ~700ms** ([`cloudStorage.js`](src/lib/cloudStorage.js)). Task notes update state per keystroke, so without this every character would be a network round trip. Sign-out flushes pending writes first.
 - **Last write wins.** The whole state is one row, so two devices editing at once will overwrite each other. Fine for one person; it is not real sync.
 - **No offline.** Once signed in, the data lives in Postgres — no connection, no tasks.
