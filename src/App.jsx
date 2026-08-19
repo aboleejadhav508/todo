@@ -5,7 +5,8 @@ import Sidebar from './components/Sidebar'
 import AddTask from './components/AddTask'
 import TaskGroup from './components/TaskGroup'
 import Calendar from './components/Calendar'
-import { CalendarDays, Search, X, Inbox, SearchX } from 'lucide-react'
+import { CalendarDays, Search, X, Inbox, SearchX, CloudOff } from 'lucide-react'
+import { useOnline } from './lib/useOnline'
 
 export default function App() {
   const { tasks, categories, sidebarView, theme, accent, appName } = useStore()
@@ -14,6 +15,7 @@ export default function App() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [query, setQuery] = useState('')
   const searchRef = useRef(null)
+  const online = useOnline()
 
   const closeSearch = () => { setQuery(''); setSearchOpen(false) }
 
@@ -86,6 +88,11 @@ export default function App() {
               {isSearching
                 ? `${results.length} ${results.length === 1 ? 'match' : 'matches'}`
                 : `${todoCount} to do · ${doneCount} done`}
+              {!online && (
+                <span className="offline-pill" title="Changes are saved on this device and will sync when you reconnect">
+                  <CloudOff size={11} /> Offline
+                </span>
+              )}
             </p>
           </div>
 

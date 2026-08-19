@@ -12,3 +12,13 @@ createRoot(document.getElementById('root')).render(
     {isConfigured ? <Root /> : <App />}
   </StrictMode>,
 )
+
+// Service worker: makes the app shell load with no network. Registered only in
+// production builds — in dev it would serve stale assets and fight HMR.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.warn('[sw] registration failed:', err.message)
+    })
+  })
+}

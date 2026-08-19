@@ -7,7 +7,8 @@ export function useAuthUser() {
 
   useEffect(() => {
     if (!supabase) return
-    supabase.auth.getUser().then(({ data }) => setUser(data?.user ?? null))
+    // getSession() works offline; getUser() would require a network round trip.
+    supabase.auth.getSession().then(({ data }) => setUser(data?.session?.user ?? null))
     const { data } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null)
     })
